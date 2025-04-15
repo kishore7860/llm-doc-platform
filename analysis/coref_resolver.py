@@ -6,5 +6,4 @@ nlp.add_pipe("coreferee")
 
 def resolve_coreferences(text: str) -> str:
     doc = nlp(text)
-    chains = doc._.coref_chains
-    return chains
+    return doc._.resolved_text

@@ -6,12 +6,13 @@ from analysis.summarizer import summarize
 from analysis.relationship_mapper import extract_relationships
 from analysis.coref_resolver import resolve_coreferences
 from analysis.graph_builder import build_relationship_graph
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile ,Form
 from ingestion.text_extractor import extract_text
 from analysis.classifier import classify_document
 from fastapi import Depends, HTTPException
 from fastapi_jwt_auth import AuthJWT
 from nlp.nl_query_handler import answer_nl_query
+from fastapi.middleware.cors import CORSMiddleware
 from monitoring.prometheus_metrics import setup_metrics
 
 
@@ -26,6 +27,21 @@ def require_role(required_roles: list[str]):
         if role not in required_roles:
             raise HTTPException(status_code=403, detail="Access forbidden")
     return wrapper
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+@app.post("/login")
+def login(username: str = Form(...), password: str = Form(...), Authorize: AuthJWT = Depends()):
+    # Simulated login logic
+    if username == "admin" and password == "admin":
+        access_token = Authorize.create_access_token(subject=username, user_claims={"role": "admin"})
+        return {"access_token": access_token}
+    raise HTTPException(status_code=401, detail="Invalid credentials")
 @app.post("/ingest/")
 async def ingest_file(file: UploadFile):
     file_path = f"/tmp/{file.filename}"
