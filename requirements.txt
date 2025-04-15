@@ -3,3 +3,10 @@ python-docx
 langchain
 chromadb
 sentence-transformers
+fastapi
+uvicorn
+transformers
+spacy
+prometheus_fastapi_instrumentator
+mlflow
+scikit-learn

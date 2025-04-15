@@ -1,8 +1,14 @@
 import spacy
 
 # Load spaCy's small English model
-nlp = spacy.load("en_core_web_sm")
 
+import coreferee
+
+nlp = spacy.load("en_core_web_trf")
+nlp.add_pipe("coreferee")
+
+doc = nlp("Kishore is a student. He wants to build a project.")
+print(doc._.coref_chains)
 def extract_entities(text: str):
     doc = nlp(text)
     entities = []
