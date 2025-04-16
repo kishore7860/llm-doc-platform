@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/233661227139964069/5a1651b45dd14fb78f4fbf8c8ea98394/artifacts
+end_time: 1744831181982
+entry_point_name: ''
+experiment_id: '233661227139964069'
+lifecycle_stage: active
+run_id: 5a1651b45dd14fb78f4fbf8c8ea98394
+run_name: classify-2025-04-16T14:19:41.510122
+run_uuid: 5a1651b45dd14fb78f4fbf8c8ea98394
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1744831181871
+status: 3
+tags: []
+user_id: kishorereddymamidi

@@ -18,31 +18,35 @@ A scalable, modular AI platform that ingests, analyzes, and extracts structured 
 ---
 
 ## 🏗️ Project Structure
+
 llm-doc-platform/
-├── api/                 # FastAPI routes and endpoints
-├── analysis/            # NLP modules: NER, summarizer, relationship mapping, etc.
-├── auth/                # JWT authentication and user models
-├── ingestion/           # Document and metadata extraction
-├── monitoring/          # Prometheus and MLflow setup
-├── nlp/                 # Natural language query handler
-├── rag/                 # RAG retriever logic and embedding generation
-├── frontend/            # (Planned) React + D3.js UI components
-├── prometheus.yml       # Prometheus configuration
-└── requirements.txt     # Python dependencies
+- ├── api/                 # FastAPI routes and endpoints
+- ├── analysis/            # NLP modules: NER, summarizer, relationship mapping, etc.
+- ├── auth/                # JWT authentication and user models
+- ├── ingestion/           # Document and metadata extraction
+- ├── monitoring/          # Prometheus and MLflow setup
+- ├── nlp/                 # Natural language query handler
+- ├── rag/                 # RAG retriever logic and embedding generation
+- ├── frontend/            # (Planned) React + D3.js UI components
+- ├── prometheus.yml       # Prometheus configuration
+- └── requirements.txt     # Python dependencies
+
 ---
 
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the Repository
-```bash
+
 git clone https://github.com/your-username/llm-doc-platform.git
 cd llm-doc-platform
-2. Create a Virtual Environment
+
+### 2. Create a Virtual Environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-3. Install Dependencies
+
+### 3. Install Dependencies
 pip install -r requirements.txt
-4. Set Environment Variables
+### 4. Set Environment Variables
 
 Create a .env file in the root directory:
 OPENAI_API_KEY=your_api_key_here

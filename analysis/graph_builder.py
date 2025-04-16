@@ -9,8 +9,11 @@ def build_relationship_graph(triples, output_html="relationship_graph.html"):
         G.add_node(obj, label=obj)
         G.add_edge(subj, obj, label=verb)
 
-    net = Network(height="600px", width="100%", directed=True)
-    net.from_nx(G)
-    net.show(output_html)
-
+    try:
+        net = Network(height="600px", width="100%", directed=True)
+        net.from_nx(G)
+        net.show(output_html)
+    except Exception as e:
+        print(f"❌ Failed to render graph: {e}")
+        raise
     return output_html

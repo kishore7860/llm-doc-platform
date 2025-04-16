@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "I", "label": "I", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Vatic", "label": "Vatic", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "platforms", "label": "platforms", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "models", "label": "models", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "frameworks", "label": "frameworks", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "accuracy", "label": "accuracy", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "environments", "label": "environments", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "who", "label": "who", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "environment", "label": "environment", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "that", "label": "that", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "efficiency", "label": "efficiency", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "projects", "label": "projects", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "structures", "label": "structures", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "experience", "label": "experience", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "thinking", "label": "thinking", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "solutions", "label": "solutions", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "problems", "label": "problems", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "excites", "label": "excites", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "trading", "label": "trading", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "what", "label": "what", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "language", "label": "language", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "they", "label": "they", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "tools", "label": "tools", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "skills", "label": "skills", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "mission", "label": "mission", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "I", "label": "apply", "to": "Vatic", "width": 1}, {"arrows": "to", "from": "I", "label": "seek", "to": "platforms", "width": 1}, {"arrows": "to", "from": "I", "label": "optimize", "to": "models", "width": 1}, {"arrows": "to", "from": "I", "label": "have", "to": "frameworks", "width": 1}, {"arrows": "to", "from": "I", "label": "optimize", "to": "accuracy", "width": 1}, {"arrows": "to", "from": "I", "label": "understand", "to": "environments", "width": 1}, {"arrows": "to", "from": "who", "label": "pace", "to": "environment", "width": 1}, {"arrows": "to", "from": "that", "label": "maintain", "to": "efficiency", "width": 1}, {"arrows": "to", "from": "projects", "label": "build", "to": "structures", "width": 1}, {"arrows": "to", "from": "experience", "label": "hone", "to": "thinking", "width": 1}, {"arrows": "to", "from": "solutions", "label": "require", "to": "problems", "width": 1}, {"arrows": "to", "from": "excites", "label": "cut", "to": "trading", "width": 1}, {"arrows": "to", "from": "what", "label": "include", "to": "language", "width": 1}, {"arrows": "to", "from": "they", "label": "succeed", "to": "tools", "width": 1}, {"arrows": "to", "from": "skills", "label": "contribute", "to": "mission", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

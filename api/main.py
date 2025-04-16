@@ -14,9 +14,37 @@ from fastapi_jwt_auth import AuthJWT
 from nlp.nl_query_handler import answer_nl_query
 from fastapi.middleware.cors import CORSMiddleware
 from monitoring.prometheus_metrics import setup_metrics
-
+from auth import auth
+from fastapi.security import HTTPBearer
+from fastapi.openapi.utils import get_openapi
 
 app = FastAPI()
+security = HTTPBearer()
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="LLM Document Processing API",
+        version="1.0.0",
+        description="Secure document classification, summarization, entity extraction, and relationship mapping.",
+        routes=app.routes,
+    )
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+        }
+    }
+    for path in openapi_schema["paths"]:
+        for method in openapi_schema["paths"][path]:
+            if "security" not in openapi_schema["paths"][path][method]:
+                openapi_schema["paths"][path][method]["security"] = [{"BearerAuth": []}]
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 setup_metrics(app)
 
 def require_role(required_roles: list[str]):
@@ -35,13 +63,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 @app.post("/login")
 def login(username: str = Form(...), password: str = Form(...), Authorize: AuthJWT = Depends()):
-    # Simulated login logic
-    if username == "admin" and password == "admin":
-        access_token = Authorize.create_access_token(subject=username, user_claims={"role": "admin"})
-        return {"access_token": access_token}
-    raise HTTPException(status_code=401, detail="Invalid credentials")
+    try:
+        if username == "admin" and password == "admin":
+            access_token = Authorize.create_access_token(
+                subject=username, user_claims={"role": "admin"}
+            )
+            return {"access_token": access_token}
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/ingest/")
 async def ingest_file(file: UploadFile):
     file_path = f"/tmp/{file.filename}"
@@ -107,23 +143,39 @@ async def graph_relationships(file: UploadFile):
     }
 
 
-@app.post("/classify/",dependencies=[Depends(require_role(["admin", "analyst"]))])
+@app.post("/classify/", dependencies=[Depends(require_role(["admin", "analyst"]))])
 async def classify_file(file: UploadFile):
-    # Save uploaded file temporarily
-    file_path = f"/tmp/{file.filename}"
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+    try:
+        print(f"✅ Received file: {file.filename}")
+        
+        file_path = f"/tmp/{file.filename}"
+        with open(file_path, "wb") as f:
+            content = await file.read()
+            print(f"📦 Writing file to disk: {file_path} ({len(content)} bytes)")
+            f.write(content)
 
-    # Extract text & classify
-    text = extract_text(file_path)
-    classification = classify_document(text)
+        # Extract text
+        text = extract_text(file_path)
+        print(f"📝 Extracted text (first 300 chars):\n{text[:300]}\n")
 
-    return {
-        "predicted_type": classification["predicted_label"],
-        "confidence": classification["confidence"],
-        "label_scores": classification["label_scores"]
-    }
+        if not text.strip():
+            raise ValueError("❌ No text extracted from document!")
 
+        # Run classification
+        classification = classify_document(text)
+        print("🎯 Classification result:", classification)
+
+        return {
+            "predicted_type": classification["predicted_label"],
+            "confidence": classification["confidence"],
+            "label_scores": classification["label_scores"]
+        }
+
+    except Exception as e:
+        import traceback
+        print("🚨 ERROR during classification:")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 @app.post("/classify-query/")
 async def classify_via_query(file: UploadFile, query: str):
     file_path = f"/tmp/{file.filename}"

@@ -19,23 +19,6 @@ CANDIDATE_LABELS = [
     "Policy Document"
 ]
 
-def classify_document(text: str, labels: List[str] = CANDIDATE_LABELS) -> Dict:
-    """
-    Classify document text using zero-shot learning.
-
-    Parameters:
-        text: Extracted document text
-        labels: List of labels to classify against
-
-    Returns:
-        dict containing best label and label scores
-    """
-    result = classifier(text[:1000], candidate_labels=labels)  # Truncate for speed
-    return {
-        "predicted_label": result["labels"][0],
-        "confidence": result["scores"][0],
-        "label_scores": dict(zip(result["labels"], result["scores"]))
-    }
 
 def classify_document(text: str, labels: List[str] = CANDIDATE_LABELS) -> Dict:
     result = classifier(text[:1000], candidate_labels=labels)
